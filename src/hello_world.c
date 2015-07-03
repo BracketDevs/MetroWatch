@@ -1,6 +1,8 @@
 /* 
-Created & Designed by: Marc Ferrandiz Borras 
-Metro Watch
+MetroWatchInverted by BracketDevs
+https://github.com/BracketDevs/MetroWatch
+
+Forked from Metro Watch by Marc Ferrandiz Borras 
 www.marcferrandiz.com
 */
 
@@ -25,6 +27,9 @@ Slot on-screen layout:
 #define NUMBER_OF_IMAGES 10 //total numbers
 #define EMPTY_SLOT -1 
 #define UUID {0x7d,0x04,0xcb,0x24,0x49,0x88,0x42,0xb8,0xbb,0xa0,0x15,0x35,0xba,0xf2,0x90,0x43}//Universally Unique Identifier
+
+static BitmapLayer *s_background_layer;
+static GBitmap *s_background_bitmap;
 
 Window *window;//initialize window
 BitmapLayer *bitmap_layer[TOTAL_SLOTS];
@@ -154,8 +159,16 @@ void handle_init(void) {
 	position[3].y = 86;
 	// Create a window 
 	window = window_create();
+	
+	// background
+	// Create GBitmap, then set to created BitmapLayer
+	s_background_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BACKGROUND);
+	s_background_layer = bitmap_layer_create(GRect(0, 0, 144, 168));
+	bitmap_layer_set_bitmap(s_background_layer, s_background_bitmap);
+	layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_background_layer));
+
 	//Background Color
-	window_set_background_color(window, GColorBlack);
+	window_set_background_color(window, GColorWhite);
 	// Push the window into the top of the stack
 	window_stack_push(window, true);
 	//Get a time structure so that the face doesn't start blank
@@ -195,6 +208,11 @@ void handle_deinit(void) {
 		// destroy bitmap
 		gbitmap_destroy(bitmap[j]);
 	}
+
+	// destroy background
+	gbitmap_destroy(s_background_bitmap);
+	bitmap_layer_destroy(s_background_layer);
+	
 	// Destroy the window
 	window_destroy(window);
 }
